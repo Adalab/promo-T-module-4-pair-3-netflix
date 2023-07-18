@@ -14,13 +14,11 @@ async function getConnection() {
     host: 'localhost',
     database: 'netflix',
     user: 'root',
-    password: 'pitijopoOjo!',
+    password: 'KF.tD9_uMzL?!^2',
   });
   await connection.connect();
 
-  console.log(
-    `Conexión establecida con la base de datos (identificador=${connection.threadId})`
-  );
+  console.log(`Conexión establecida con la base de datos (identificador=${connection.threadId})`);
 
   return connection;
 }
@@ -30,13 +28,15 @@ server.get('/movies', async (req, res) => {
 
   const connection = await getConnection();
   const [results] = await connection.query(sql);
-  res.json({success:true, movies:results});
+  res.json({ success: true, movies: results });
   connection.end();
 });
-
 
 // init express aplication
 const serverPort = 4000;
 server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
+
+const staticServerPathWeb = 'src/public-react';
+server.use(express.static(staticServerPathWeb));
