@@ -14,7 +14,7 @@ async function getConnection() {
     host: 'localhost',
     database: 'netflix',
     user: 'root',
-    password: 'KF.tD9_uMzL?!^2',
+    password: '99ttzzrrEEqq',
   });
   await connection.connect();
 
@@ -22,9 +22,22 @@ async function getConnection() {
 
   return connection;
 }
+
+//endpoint movies
 server.get('/movies', async (req, res) => {
   console.log('Pidiendo a la base de datos información de las películas.');
   let sql = 'SELECT * FROM movies';
+
+  const connection = await getConnection();
+  const [results] = await connection.query(sql);
+  res.json({ success: true, movies: results });
+  connection.end();
+});
+
+// endpoint filter genre
+server.get('/movies?filter=genre', async (req, res) => {
+  console.log('Pidiendo a la base de datos información de las películas.');
+  let sql = 'SELECT * FROM movies WHERE genre = req.genre';
 
   const connection = await getConnection();
   const [results] = await connection.query(sql);
@@ -38,5 +51,9 @@ server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
 
+//servidores de estaticos
 const staticServerPathWeb = 'src/public-react';
 server.use(express.static(staticServerPathWeb));
+
+const staticServerPathImages = 'src/public-movies-images/';
+server.use(express.static(staticServerPathImages));
