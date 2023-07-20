@@ -18,31 +18,35 @@ async function getConnection() {
   });
   await connection.connect();
 
-  console.log(`Conexión establecida con la base de datos (identificador=${connection.threadId})`);
+  console.log(
+    `Conexión establecida con la base de datos (identificador=${connection.threadId})`
+  );
 
   return connection;
 }
 
-//endpoint movies
+//endpoint movies → aqui se pueden aplicar los filtros directamente, no hace falta otro endpoint
 server.get('/movies', async (req, res) => {
   console.log('Pidiendo a la base de datos información de las películas.');
-  let sql = 'SELECT * FROM movies';
 
-  const connection = await getConnection();
-  const [results] = await connection.query(sql);
-  res.json({ success: true, movies: results });
-  connection.end();
-});
+  //lo que nos llega por req.query son los params, nos interesa genre
+  const moviesGenre = req.query.genre;
+  console.log(req.query);
 
-// endpoint filter genre
-server.get('/movies?filter=genre', async (req, res) => {
-  console.log('Pidiendo a la base de datos información de las películas.');
-  let sql = 'SELECT * FROM movies WHERE genre = req.genre';
-
-  const connection = await getConnection();
-  const [results] = await connection.query(sql);
-  res.json({ success: true, movies: results });
-  connection.end();
+  if (moviesGenre === '') {
+    let sql = `SELECT * FROM movies`;
+    const connection = await getConnection();
+    const [results] = await connection.query(sql);
+    res.json({ success: true, movies: results });
+    connection.end();
+  } else {
+    //cambiamos lo que queremos obtener de MySql
+    let sql = `SELECT * FROM movies WHERE genre = '${moviesGenre}'`;
+    const connection = await getConnection();
+    const [results] = await connection.query(sql);
+    res.json({ success: true, movies: results });
+    connection.end();
+  }
 });
 
 // init express aplication
