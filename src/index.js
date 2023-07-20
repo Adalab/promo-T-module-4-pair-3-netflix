@@ -14,7 +14,7 @@ async function getConnection() {
     host: 'localhost',
     database: 'netflix',
     user: 'root',
-    password: '99ttzzrrEEqq',
+    password: 'pitijopoOjo!',
   });
   await connection.connect();
 
@@ -31,17 +31,19 @@ server.get('/movies', async (req, res) => {
 
   //lo que nos llega por req.query son los params, nos interesa genre
   const moviesGenre = req.query.genre;
-  console.log(req.query);
+  const moviesSort = req.query.sort;
+  console.log(moviesSort);
 
   if (moviesGenre === '') {
-    let sql = `SELECT * FROM movies`;
+    let sql = `SELECT * FROM movies ORDER BY title ${moviesSort}`;
+
     const connection = await getConnection();
     const [results] = await connection.query(sql);
     res.json({ success: true, movies: results });
     connection.end();
   } else {
     //cambiamos lo que queremos obtener de MySql
-    let sql = `SELECT * FROM movies WHERE genre = '${moviesGenre}'`;
+    let sql = `SELECT * FROM movies WHERE genre = '${moviesGenre}' ORDER BY title ${moviesSort}`;
     const connection = await getConnection();
     const [results] = await connection.query(sql);
     res.json({ success: true, movies: results });
